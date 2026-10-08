@@ -1,0 +1,23 @@
+{
+  "name": "art-history-review",
+  "private": true,
+  "version": "0.1.0",
+  "description": "美术史复盘网站 · 单仓两包（app/api 后端 + app/web 前端）",
+  "workspaces": [
+    "app/api"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @art/api",
+    "init:db": "npm run init:db -w @art/api",
+    "seed": "npm run seed -w @art/api",
+    "preview": "npm run preview -w @art/api",
+    "verify:t2": "npm run verify:t2 -w @art/api",
+    "verify:t3": "npm run verify:t3 -w @art/api",
+    "verify:t4": "npm run verify:t4 -w @art/api",
+    "verify:t5": "npm run verify:t5 -w @art/api",
+    "verify:t6": "npm run verify:t6 -w @art/api",
+    "verify:t7": "npm run verify:t7 -w @art/api",
+    "verify:t12": "npm run verify:t12 -w @art/api",
+    "autostart": "npm run autostart -w @art/api"
+  }
+}

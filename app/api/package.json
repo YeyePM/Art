@@ -1,0 +1,34 @@
+{
+  "name": "@art/api",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js",
+    "init:db": "node src/db/init.js",
+    "seed": "node scripts/seed-questions.js",
+    "preview": "node scripts/preview-today.js",
+    "verify:t2": "node scripts/verify-t2.js",
+    "verify:t3": "node scripts/verify-t3.js",
+    "verify:t4": "node scripts/verify-t4.js",
+    "verify:t5": "node scripts/verify-t5.js",
+    "verify:t6": "node scripts/verify-t6.js",
+    "verify:t7": "node scripts/verify-t7.js",
+    "verify:t8": "node scripts/verify-t8.js",
+    "verify:t9": "node scripts/verify-t9.js",
+    "verify:t10": "node scripts/verify-t10.js",
+    "verify:t11": "node scripts/verify-t11.js",
+    "verify:t12": "node scripts/verify-t12.js",
+    "autostart": "node scripts/install-autostart.js",
+    "autostart:remove": "node scripts/install-autostart.js remove",
+    "backfill:images": "node scripts/backfill-images.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.2.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "node-notifier": "^10.0.1"
+  }
+}

@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-skin="b">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>今日页 · 视觉方向对比（设计稿）</title>
+<style>
+  /* ============ 四套皮：只换变量，结构完全一样 ============ */
+  :root{                                   /* B · 夜馆 */
+    --bg:#0D0F12; --card:#14181D; --line:rgba(232,227,218,.14);
+    --ink:#E8E3DA; --ink2:#9A948A; --accent:#6E9BC5;
+    --btn-bg:#6E9BC5; --btn-ink:#0D0F12;
+    --radius:10px; --pad:24px;
+    --media-radius:10px; --media-border:1px solid rgba(232,227,218,.20);
+    --font-title:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;
+    --font-body:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;
+  }
+  html[data-skin="a"]{                      /* A · 美术馆标签 */
+    --bg:#FFFFFF; --card:#FFFFFF; --line:rgba(20,20,20,.10);
+    --ink:#141414; --ink2:#6B665C; --accent:#B04A2A;
+    --btn-bg:#141414; --btn-ink:#FFFFFF;
+    --radius:3px; --pad:34px;
+    --media-radius:0; --media-border:1px solid rgba(20,20,20,.12);
+    --font-title:"Songti SC","Source Han Serif SC","Noto Serif SC",Georgia,serif;
+    --font-body:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;
+  }
+  html[data-skin="c"]{                      /* C · 纸本 */
+    --bg:#F5EFE3; --card:#FBF7EE; --line:rgba(43,38,32,.16);
+    --ink:#2B2620; --ink2:#6E6350; --accent:#A63A2B;
+    --btn-bg:#2B2620; --btn-ink:#F5EFE3;
+    --radius:2px; --pad:28px;
+    --media-radius:2px; --media-border:1px solid rgba(43,38,32,.18);
+    --font-title:"Songti SC","Source Han Serif SC","Noto Serif SC",Georgia,serif;
+    --font-body:"Songti SC","Source Han Serif SC","Noto Serif SC",Georgia,serif;
+  }
+  html[data-skin="d"]{                      /* D · 夜馆·编辑式（DailyArt 参考） */
+    --bg:#17171A; --card:#1B1B1F; --line:rgba(255,255,255,.09);
+    --ink:#F2F0EC; --ink2:#A8A5A0; --accent:#E08A3C;
+    --btn-bg:#E08A3C; --btn-ink:#17171A;
+    --radius:0px; --pad:20px;               /* 直角——图不做卡片框 */
+    --media-radius:0; --media-border:none;
+    --font-title:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;
+    --font-body:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:400 15px/1.75 var(--font-body);
+    -webkit-font-smoothing:antialiased;
+    transition:background .18s ease,color .18s ease;
+  }
+
+  /* ---------- 方案切换（只属于设计稿，产品里没有） ---------- */
+  .switcher{
+    position:sticky; top:0; z-index:60;
+    display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+    padding:14px 24px;
+    background:var(--bg); border-bottom:1px solid var(--line);
+  }
+  .switcher .lb{font-size:12px; letter-spacing:.14em; color:var(--ink2); margin-right:6px}
+  .switcher button{
+    font:400 13px/1 var(--font-body); color:var(--ink2);
+    background:transparent; border:1px solid var(--line); border-radius:999px;
+    padding:7px 14px; cursor:pointer; transition:.15s;
+  }
+  .switcher button:hover{color:var(--ink)}
+  .switcher button[aria-pressed="true"]{
+    color:var(--btn-ink); background:var(--btn-bg); border-color:var(--btn-bg);
+  }
+
+  .page{max-width:860px; margin:0 auto; padding:36px 24px 72px}
+
+  /* ---------- 统计条 ---------- */
+  .stats{
+    display:flex; gap:22px; flex-wrap:wrap; align-items:baseline;
+    padding-bottom:22px; border-bottom:1px solid var(--line);
+    font-size:12.5px; letter-spacing:.04em; color:var(--ink2);
+  }
+  .stats b{font:600 17px/1 var(--font-title); color:var(--ink); margin-right:5px}
+
+  /* ---------- 区块 ---------- */
+  .block{padding:34px 0 0}
+  .block-hd{display:flex; align-items:baseline; justify-content:space-between; gap:12px}
+  .block-hd h2{
+    margin:0; font:600 21px/1.3 var(--font-title); letter-spacing:.02em;
+  }
+  .block-hd h2::after{
+    content:""; display:block; width:26px; height:2px;
+    background:var(--accent); margin-top:10px;
+  }
+  html[data-skin="b"] .block-hd h2::after{display:none}
+  .block-hd .meta{font-size:12.5px; color:var(--ink2)}
+  .block-hd .meta b{font:600 15px/1 var(--font-title); color:var(--ink)}
+
+  /* ---------- 题目卡 ---------- */
+  .q{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:var(--pad); margin-top:22px;
+  }
+  .q-hd{display:flex; align-items:center; gap:10px; margin-bottom:18px}
+  .q-idx{font:600 13px/1 var(--font-title); letter-spacing:.06em; color:var(--ink2)}
+  .chip{
+    font-size:12px; letter-spacing:.04em; color:var(--accent);
+    border:1px solid var(--accent); border-radius:999px; padding:3px 10px;
+  }
+  .flag{
+    margin-left:auto; font:400 12.5px/1 var(--font-body); color:var(--ink2);
+    background:none; border:none; cursor:pointer; padding:4px 0;
+  }
+  .flag:hover{color:var(--ink)}
+
+  .q-body{display:flex; gap:var(--pad); align-items:flex-start}
+  .q-body.plain{display:block}
+  .q-fig{flex:0 0 46%; margin:0}
+  .q-fig img{
+    width:100%; aspect-ratio:4/3; object-fit:cover; display:block;
+    border-radius:var(--media-radius); border:var(--media-border);
+  }
+  .q-fig figcaption{margin-top:8px; font-size:12px; color:var(--ink2)}
+  .q-main{flex:1; min-width:0}
+  .q-stem{margin:0 0 16px; font:400 17px/1.7 var(--font-title)}
+
+  .opts{display:flex; flex-direction:column; gap:9px}
+  .opt{
+    display:flex; gap:11px; align-items:center;
+    border:1px solid var(--line); border-radius:var(--radius);
+    padding:12px 15px; font-size:14.5px; cursor:pointer;
+  }
+  .opt:hover{border-color:var(--accent)}
+  .opt .k{font:600 12.5px/1 var(--font-title); color:var(--ink2); min-width:14px}
+  .opt.onaccent{border-color:var(--accent)}   /* 展示"已选"状态 */
+
+  .row-end{display:flex; align-items:center; gap:14px; margin-top:18px}
+  .btn{
+    font:500 14px/1 var(--font-body); color:var(--btn-ink); background:var(--btn-bg);
+    border:none; border-radius:var(--radius); padding:12px 24px; cursor:pointer;
+  }
+  .hint{font-size:12.5px; color:var(--ink2)}
+
+  textarea, input[type="text"]{
+    width:100%; font:400 14.5px/1.7 var(--font-body); color:var(--ink);
+    background:transparent; border:1px solid var(--line); border-radius:var(--radius);
+    padding:12px 14px; resize:vertical;
+  }
+  textarea::placeholder, input::placeholder{color:var(--ink2); opacity:.75}
+  textarea:focus, input:focus, .opt:focus{outline:1px solid var(--accent); outline-offset:1px}
+  textarea{height:96px}
+
+  /* 复习题的区分：只加标记，不换底色 */
+  .q.review{border-left:3px solid var(--accent)}
+  html[data-skin="a"] .q.review{border-left-width:2px}
+
+  /* ---------- D 专属：去掉卡片，改用细分割线 + 大写小字分层 ---------- */
+  html[data-skin="d"] .q,
+  html[data-skin="d"] .wk{
+    background:transparent; border:none; border-top:1px solid var(--line);
+    border-radius:0; padding:26px 0 0;
+  }
+  html[data-skin="d"] .q.review{border-left:3px solid var(--accent); padding-left:18px}
+  html[data-skin="d"] .q-idx,
+  html[data-skin="d"] .wk-lb{font-size:11.5px; letter-spacing:.18em}
+  html[data-skin="d"] .stats{
+    text-transform:uppercase; letter-spacing:.16em; font-size:11.5px;
+  }
+  html[data-skin="d"] .stats b{letter-spacing:0}
+  html[data-skin="d"] .done{border-radius:0; border-left:none; border-right:none}
+
+  .done{
+    margin-top:22px; padding:16px var(--pad); border:1px dashed var(--line);
+    border-radius:var(--radius); font-size:13px; color:var(--ink2); text-align:center;
+  }
+
+  /* ---------- 每周一批 ---------- */
+  .weekly{display:grid; grid-template-columns:repeat(auto-fit,minmax(232px,1fr)); gap:18px; margin-top:22px}
+  .wk{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:var(--pad); display:flex; flex-direction:column;
+  }
+  .wk-lb{font:600 12px/1 var(--font-title); letter-spacing:.14em; color:var(--ink2); text-transform:uppercase}
+  .wk img{width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:var(--media-radius); margin-top:14px}
+
+  /* ---------- 动效 ①图片显影 ②依次浮入 ③放大过渡 ④图片视差 ---------- */
+  .wk-fig{position:relative; overflow:hidden; border-radius:var(--media-radius); margin-top:14px}
+  .wk-fig img{margin-top:0}
+
+  @media (prefers-reduced-motion: no-preference){
+    .anim .develop{animation:develop .75s cubic-bezier(.2,.7,.2,1) both}
+    .anim .reveal{opacity:0; transform:translateY(14px)}
+    .anim .reveal.in{
+      opacity:1; transform:none;
+      transition:opacity .55s ease, transform .55s cubic-bezier(.2,.7,.2,1);
+    }
+    .anim .parallax{transition:transform .3s cubic-bezier(.2,.7,.2,1)}
+  }
+  @keyframes develop{
+    from{opacity:0; filter:blur(16px) saturate(.7); transform:scale(1.015)}
+    60% {opacity:1}
+    to  {opacity:1; filter:blur(0) saturate(1); transform:none}
+  }
+
+  /* 动效总开关：一关全关，方便你对比"有 / 没有" */
+  .no-anim *, .no-anim *::before{
+    animation:none !important; transition:none !important;
+  }
+  .no-anim .reveal{opacity:1 !important; transform:none !important}
+  .no-anim .develop{opacity:1 !important; filter:none !important}
+  .no-anim .parallax{transform:none !important}
+
+  /* ---------- 主界面：概览 + 导航（两级进入 · 鼠标左右移动驱动横排卡片） ---------- */
+  [data-anchor]{scroll-margin-top:76px}
+  .cover{
+    position:fixed; inset:0; z-index:40; background:var(--bg); overflow:hidden;
+    display:flex; flex-direction:column; justify-content:flex-start;
+    padding:88px 0 56px;
+    transition:transform .46s cubic-bezier(.4,0,.2,1), opacity .4s ease;
+    user-select:none; -webkit-user-select:none;
+  }
+  .cover.away{pointer-events:none; opacity:0}
+  .cv-inner{width:100%; padding:0 24px}
+  .cv-date{font-size:11.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink2)}
+  .cv-title{margin:12px 0 0; font:600 30px/1.32 var(--font-title)}
+  .cv-sub{margin:10px 0 0; font-size:13.5px; color:var(--ink2)}
+
+  /* 横排卡片：鼠标往左往右，整排跟着走（缓动追赶，不是硬跟手） */
+  .cv-deck-view{width:100%; overflow:hidden; margin-top:24px; padding:6px 0 10px; flex:0 0 auto}
+  .cv-deck{display:flex; align-items:stretch; gap:18px; padding:0 24px; will-change:transform}
+  .cv-card{
+    position:relative; flex:0 0 40vw; min-width:300px; height:240px; overflow:hidden;
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:20px 22px; cursor:pointer;
+    transition:border-color .24s ease, transform .24s ease;
+  }
+  .cv-card:hover{border-color:var(--accent); transform:translateY(-3px)}
+  .cv-card.open{border-color:var(--accent); transform:none}
+  .cv-row{display:flex; align-items:baseline; gap:12px}
+  .cv-card .n{font:600 11.5px/1 var(--font-title); letter-spacing:.16em; color:var(--accent)}
+  .cv-card h3{margin:0; font:600 20px/1.35 var(--font-title)}
+  .cv-card .brief{margin-top:10px; font-size:12.5px; color:var(--ink2)}
+
+  /* 卡片定高，两层原地交叠：展开时整排不跳、不推开旁边的卡 */
+  .cv-layer{
+    position:absolute; top:20px; left:22px; bottom:20px; right:22px;
+    display:flex; flex-direction:column;
+    transition:opacity .3s ease, transform .38s cubic-bezier(.2,.7,.2,1);
+  }
+  .cv-open{right:calc(38% + 6px)}          /* 关闭态：字只占左边，右边留给画 */
+
+  /* 卡片右侧那张固定的名画：填住文字旁边那块空 */
+  .cv-side{position:absolute; top:0; right:0; bottom:0; width:38%; margin:0;
+    overflow:hidden; transition:opacity .3s ease}
+  .cv-side img{display:block; width:100%; height:100%; object-fit:cover}
+  .cv-side::after{content:""; position:absolute; inset:0;
+    background:linear-gradient(to right, var(--card) 0%, rgba(0,0,0,0) 56%)}
+  .cv-card.open .cv-side{opacity:0}        /* 展开态：图让位给字，整卡铺满 */
+  .cv-big{margin-top:auto; font:600 42px/1 var(--font-title); letter-spacing:-.01em}
+  .cv-big span{font-size:18px; color:var(--ink2); margin-left:4px}
+  .cv-kw{margin-top:8px; font-size:12px; line-height:1.6; color:var(--ink2)}
+
+  /* 第一下：就地展开（只给预览，不给内容） */
+  .cv-card.open .cv-open{opacity:0; transform:translateY(-10px); pointer-events:none}
+  .cv-more{opacity:0; transform:translateY(14px); pointer-events:none}
+  .cv-card.open .cv-more{opacity:1; transform:none; pointer-events:auto}
+  .cv-more p{margin:14px 0 0; font-size:13px; line-height:1.72; color:var(--ink2)}
+  .cv-more .btn{margin-top:auto; align-self:flex-start}
+
+  .cv-hint{margin-top:26px; display:flex; gap:22px; flex-wrap:wrap; font-size:12.5px; color:var(--ink2)}
+  .cv-hint b{font-weight:600; color:var(--ink)}
+
+  /* 鼠标位置的反馈：动到哪儿，一眼看见 */
+  .cv-grip{position:absolute; left:50%; bottom:18px; transform:translateX(-50%); text-align:center;
+    font-size:11.5px; letter-spacing:.1em; color:var(--ink2)}
+  .cv-grip .bar{width:132px; height:2px; background:var(--line); margin:0 auto 8px; border-radius:2px; overflow:hidden}
+  .cv-grip .bar i{display:block; height:100%; width:50%; background:var(--accent); transition:width .12s linear}
+
+  .cv-demo{
+    font:400 12.5px/1 var(--font-body); color:var(--accent); background:none;
+    border:none; border-bottom:1px dashed var(--accent); padding:0 0 2px; cursor:pointer;
+  }
+  .cv-demo:hover{color:var(--ink); border-bottom-color:var(--ink)}
+
+  /* ---------- 二级页的返回：进了必须出得来（今日页 / 本周一批 通用） ---------- */
+  .back-home{
+    position:fixed; top:66px; left:22px; z-index:65;
+    display:inline-flex; align-items:center; gap:6px;
+    font:400 13px/1 var(--font-body); color:var(--ink);
+    background:var(--card); border:1px solid var(--line); border-radius:999px;
+    padding:9px 15px 9px 12px; cursor:pointer;
+    box-shadow:0 10px 26px rgba(0,0,0,.34);
+    opacity:0; transform:translateY(-8px); pointer-events:none;
+    transition:opacity .26s ease, transform .3s cubic-bezier(.2,.7,.2,1),
+               border-color .18s ease, color .18s ease;
+  }
+  .back-home.in{opacity:1; transform:none; pointer-events:auto}
+  .back-home:hover{border-color:var(--accent); color:var(--accent)}
+  .back-home .ar{font-size:14px; line-height:1}
+
+  /* ---------- 碎片笔记本的入口：右下角常驻的圆（v0.2 才真有功能） ---------- */
+  .fab{
+    position:fixed; right:22px; bottom:22px; z-index:66;
+    display:flex; align-items:center; justify-content:center;
+    width:54px; height:54px; padding:0; border-radius:27px;
+    background:var(--card); border:1px solid var(--line); color:var(--accent);
+    font:300 25px/1 var(--font-body); cursor:pointer;
+    box-shadow:0 12px 30px rgba(0,0,0,.4);
+    transition:width .36s cubic-bezier(.2,.7,.2,1), border-radius .36s cubic-bezier(.2,.7,.2,1),
+               background .2s ease, color .2s ease, border-color .2s ease, transform .2s ease;
+  }
+  .fab:hover{border-color:var(--accent); background:var(--btn-bg); color:var(--btn-ink)}
+  .fab:active{transform:scale(.96)}
+  .fab .plus{transform:translateY(-1px)}
+  .fab .lbl{
+    max-width:0; opacity:0; overflow:hidden; white-space:nowrap;
+    font:400 12.5px/1 var(--font-body);
+    transition:max-width .36s cubic-bezier(.2,.7,.2,1), opacity .22s ease, margin-left .36s ease;
+  }
+  .fab.open{width:auto; padding:0 18px 0 14px; border-radius:27px}
+  .fab.open .lbl{max-width:230px; opacity:1; margin-left:8px}
+
+  /* ---------- 推送：桌面通知（内容钩子型 · 不催） ---------- */
+  .toast{
+    position:fixed; right:22px; bottom:88px; z-index:70;   /* 让开右下角那颗碎片圆 */
+    width:352px; max-width:calc(100vw - 44px);
+    background:var(--card); border:1px solid var(--line); border-radius:10px;
+    padding:14px 16px 13px 16px; cursor:pointer;
+    box-shadow:0 18px 48px rgba(0,0,0,.46);
+    opacity:0; transform:translateY(16px) scale(.98); pointer-events:none;
+    transition:opacity .34s ease, transform .42s cubic-bezier(.2,.7,.2,1), border-color .2s ease;
+  }
+  .toast.in{opacity:1; transform:none; pointer-events:auto}
+  .toast:hover{border-color:var(--accent)}
+  .toast .t-x{
+    position:absolute; top:9px; right:9px; width:22px; height:22px;
+    font:400 12px/1 var(--font-body); color:var(--ink2);
+    background:none; border:none; border-radius:4px; cursor:pointer;
+  }
+  .toast .t-x:hover{color:var(--ink); background:rgba(127,127,127,.14)}
+  .toast .t-hd{display:flex; align-items:center; gap:8px; font-size:11.5px; letter-spacing:.06em; color:var(--ink2)}
+  .toast .t-ic{width:13px; height:13px; border-radius:3px; background:var(--accent); flex:0 0 auto}
+  .toast .t-time{margin-left:auto; margin-right:22px; font-size:11px}
+  .toast .t-body{margin:10px 0 0; font:400 14px/1.62 var(--font-body); color:var(--ink)}
+  .toast .t-ft{margin-top:10px; font-size:12px; color:var(--accent)}
+
+  html[data-skin="d"] .cv-card{background:#222228; border-color:rgba(255,255,255,.07)}
+  html[data-skin="d"] .cv-side::after{
+    background:linear-gradient(to right, #222228 0%, rgba(0,0,0,0) 56%);
+  }
+
+  /* ---------- 学习进度页（叠在主界面上，只做粗粒度只读） ---------- */
+  .pg{
+    position:fixed; inset:0; z-index:45; background:var(--bg); overflow:auto;
+    padding:96px 24px 60px;
+    opacity:0; pointer-events:none; transform:translateY(14px);
+    transition:opacity .32s ease, transform .32s cubic-bezier(.2,.7,.2,1);
+  }
+  .pg.on{opacity:1; pointer-events:auto; transform:none}
+  .pg-inner{max-width:720px; margin:0 auto}
+  .pg h2{margin:0; font:600 26px/1.35 var(--font-title)}
+  .pg .back{margin-top:10px; font-size:12.5px; color:var(--ink2); cursor:pointer; display:inline-block}
+  .pg .back:hover{color:var(--accent)}
+  .pg .nums{margin-top:26px; display:grid; grid-template-columns:repeat(4,1fr); gap:12px}
+  .pg .nums div{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:16px}
+  .pg .nums b{display:block; font:600 24px/1.2 var(--font-title)}
+  .pg .nums span{font-size:12px; color:var(--ink2)}
+  .cal{margin-top:26px; display:grid; grid-template-columns:repeat(14,1fr); gap:6px}
+  .cal i{aspect-ratio:1; border-radius:3px; background:var(--line)}
+  .cal i.on{background:var(--accent)}
+  .pg .note{margin-top:18px; font-size:12.5px; line-height:1.7; color:var(--ink2)}
+  html[data-skin="d"] .pg .nums div{background:#222228; border-color:rgba(255,255,255,.07)}
+
+  /* ---------- ③ 点图放大成整幅（像打开一幅画） ---------- */
+  .lb{position:fixed; inset:0; z-index:50; display:none}
+  .lb.on{display:block}
+  .lb .scrim{position:absolute; inset:0; background:rgba(0,0,0,.88); opacity:0; transition:opacity .3s ease}
+  .lb.in .scrim{opacity:1}
+  .lb img{
+    position:absolute; object-fit:contain; cursor:zoom-out;
+    transition:left .38s cubic-bezier(.2,.7,.2,1), top .38s cubic-bezier(.2,.7,.2,1),
+               width .38s cubic-bezier(.2,.7,.2,1), height .38s cubic-bezier(.2,.7,.2,1);
+  }
+  .lb .cap{
+    position:absolute; left:0; right:0; bottom:26px; text-align:center;
+    font-size:12.5px; color:rgba(255,255,255,.62); transition:opacity .3s ease .1s; opacity:0;
+  }
+  .lb.in .cap{opacity:1}
+  img.zoomable{cursor:zoom-in}
+  .wk-name{margin-top:10px; font:600 15px/1.5 var(--font-title)}
+  .wk blockquote{
+    margin:14px 0 0; padding:0 0 0 14px; border-left:2px solid var(--accent);
+    font-size:14.5px; line-height:1.85; color:var(--ink);
+  }
+  .wk .src{margin-top:10px; font-size:12.5px; color:var(--ink2)}
+  .wk p{margin:14px 0 0}
+  .wk .grow{flex:1}
+  .wk .btn{align-self:flex-start; margin-top:14px; padding:10px 18px; font-size:13.5px}
+
+  .foot{
+    max-width:860px; margin:0 auto; padding:0 24px 60px;
+    font-size:12px; color:var(--ink2);
+  }
+  @media (max-width:640px){
+    .q-body{flex-direction:column}
+    .q-fig{flex:none; width:100%}
+  }
+</style>
+</head>
+<body>
+
+<div class="switcher">
+  <span class="lb">看方案</span>
+  <button data-set="a" aria-pressed="false">A · 美术馆标签</button>
+  <button data-set="b" aria-pressed="true">B · 夜馆</button>
+  <button data-set="c" aria-pressed="false">C · 纸本</button>
+  <button data-set="d" aria-pressed="false">D · 夜馆·编辑式（参考 DailyArt）</button>
+  <button data-replay>↻ 重播动效</button>
+  <button data-anim aria-pressed="true" style="margin-left:auto">动效：开</button>
+  <button data-cover>↺ 回主界面</button>
+</div>
+
+<!-- ============ 主界面：概览 + 导航（两级进入 · 鼠标左右移动驱动横排卡片） ============ -->
+<div class="cover" id="cover">
+  <div class="cv-inner">
+    <div class="cv-date">10 月 8 日 · 周三 · 连续 6 天</div>
+    <h1 class="cv-title">今天想做什么？</h1>
+    <p class="cv-sub">鼠标左右移动，卡片跟着走一圈。第一下点开看细节，第二下才进去。</p>
+  </div>
+
+  <div class="cv-deck-view">
+    <div class="cv-deck">
+      <article class="cv-card" data-go="stats">
+        <figure class="cv-side">
+          <img class="develop" alt="名画 · 张瑞图《山水》" src="img/home-01-progress.jpg">
+        </figure>
+        <div class="cv-layer cv-open">
+          <div class="cv-row"><span class="n">01</span><h3>学习进度</h3></div>
+          <div class="brief">连续 6 天 · 正确率 78%</div>
+          <div class="cv-big">6<span>天</span></div>
+          <div class="cv-kw">正确率 78% · 累计 34 天 · 最长 11 天</div>
+        </div>
+        <div class="cv-layer cv-more">
+          <div class="cv-row"><span class="n">01</span><h3>学习进度</h3></div>
+          <p>最近 7 天完成 5 天，错题 12 道还在队列里。这里只看大概，细账在进度页。</p>
+          <button class="btn" data-enter>看详细进度</button>
+        </div>
+      </article>
+
+      <article class="cv-card" data-go="quiz">
+        <figure class="cv-side">
+          <img class="develop" alt="名画 · 谢时臣《春山图》" src="img/home-02-quiz.jpg">
+        </figure>
+        <div class="cv-layer cv-open">
+          <div class="cv-row"><span class="n">02</span><h3>今天的题</h3></div>
+          <div class="brief">进度 6/10 · 约 12 分钟</div>
+          <div class="cv-big">6<span>/10</span></div>
+          <div class="cv-kw">客观 · 图像辨识 · 名词解释 · 含 1 道复习</div>
+        </div>
+        <div class="cv-layer cv-more">
+          <div class="cv-row"><span class="n">02</span><h3>今天的题</h3></div>
+          <p>还剩 4 道：2 道客观题、1 道图像辨识、1 道名词解释。其中 1 道是昨天错过的复习题。</p>
+          <button class="btn" data-enter>进入题目</button>
+        </div>
+      </article>
+
+      <article class="cv-card" data-go="art">
+        <figure class="cv-side">
+          <img class="develop" alt="名画 · 董其昌《春山暖翠》" src="img/home-03-weekly.jpg">
+        </figure>
+        <div class="cv-layer cv-open">
+          <div class="cv-row"><span class="n">03</span><h3>本周一批</h3></div>
+          <div class="brief">春山图 · 摘录 · 开放问题</div>
+          <div class="cv-big">春山图</div>
+          <div class="cv-kw">每日一画 · 书籍摘录 · 一个开放问题</div>
+        </div>
+        <div class="cv-layer cv-more">
+          <div class="cv-row"><span class="n">03</span><h3>本周一批</h3></div>
+          <p>春山图（局部）还没写；《隐秘的知识》第四章摘录未读；开放问题可以留空。</p>
+          <button class="btn" data-enter>去看</button>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <div class="cv-inner">
+    <div class="cv-hint">
+      <span><b>左右移动鼠标</b> 看一圈</span>
+      <span><b>点板块</b> 第一下展开 · 第二下进入</span>
+      <span><b>回车</b> 直接开始做题</span>
+      <span><b>桌面通知</b> <button class="cv-demo" id="toastDemo">重看一次</button></span>
+    </div>
+  </div>
+
+  <div class="cv-grip">
+    <div class="bar"><i></i></div>
+    鼠标往右，镜头往右
+  </div>
+</div>
+
+<!-- ============ 推送机制：桌面通知（内容钩子型，点它直接进今日页） ============ -->
+<div class="toast" id="toast" role="button" tabindex="0" aria-label="桌面通知">
+  <button class="t-x" id="toastX" aria-label="关闭">✕</button>
+  <div class="t-hd">
+    <span class="t-ic"></span>
+    <span class="t-app">美术史复盘 · 今日</span>
+    <span class="t-time">19:00</span>
+  </div>
+  <p class="t-body">今天有一道题：德加为什么把画面停在"未完成"？</p>
+  <div class="t-ft">点开看看 →</div>
+</div>
+
+<!-- ============ 二级页的返回：进了必须出得来（今日页 / 本周一批 通用） ============ -->
+<button class="back-home" id="backHome" aria-label="返回主界面">
+  <span class="ar">←</span>返回主界面
+</button>
+
+<!-- ============ 碎片笔记本入口：右下角常驻的圆（只做入口，v0.2 才有功能） ============ -->
+<button class="fab" id="fragFab" aria-label="碎片笔记本 · 上传入口">
+  <span class="plus">＋</span>
+  <span class="lbl">碎片笔记本 · v0.2 再做</span>
+</button>
+
+<!-- ============ 学习进度页（第一版只做粗粒度只读） ============ -->
+<div class="pg" id="pg">
+  <div class="pg-inner">
+    <h2>学习进度</h2>
+    <div class="back">← 返回主界面</div>
+
+    <div class="nums">
+      <div><b>6</b><span>当前连续（天）</span></div>
+      <div><b>11</b><span>最长连续（天）</span></div>
+      <div><b>34</b><span>总完成天数</span></div>
+      <div><b>78%</b><span>正确率</span></div>
+    </div>
+
+    <div class="cal" id="cal"></div>
+    <div class="note">最近 28 天·只标"完成 / 未完成"。趋势图与薄弱知识点分析留到 v0.3，不在第一版。</div>
+  </div>
+</div>
+
+<main class="page">
+
+  <div class="stats">
+    <span><b>6</b>天 连续</span>
+    <span><b>11</b>天 最长</span>
+    <span><b>34</b>天 累计</span>
+    <span><b>78%</b>正确率</span>
+  </div>
+
+  <!-- ===== ① 今日 10 题 ===== -->
+  <section class="block" data-anchor="quiz">
+    <div class="block-hd">
+      <h2>今日 10 题</h2>
+      <div class="meta">进度 <b>6</b>/10</div>
+    </div>
+
+    <!-- 图像辨识题（带图） -->
+    <article class="q">
+      <div class="q-hd">
+        <span class="q-idx">第 07 题</span>
+        <span class="chip">图像辨识</span>
+        <button class="flag">⚑ 标记问题</button>
+      </div>
+      <div class="q-body">
+        <figure class="q-fig">
+          <img class="zoomable" src="img/q-image.jpg" alt="待辨识作品">
+          <figcaption>作品图 · 请判断作者与风格依据</figcaption>
+        </figure>
+        <div class="q-main">
+          <p class="q-stem">此作最可能出自谁之手？请依据光色、空间与笔触判断。</p>
+          <div class="opts">
+            <div class="opt"><span class="k">A</span>彼得·德·霍赫</div>
+            <div class="opt onaccent"><span class="k">B</span>约翰内斯·维米尔</div>
+            <div class="opt"><span class="k">C</span>赫里特·特尔·博尔赫</div>
+            <div class="opt"><span class="k">D</span>伦勃朗·凡·莱因</div>
+          </div>
+          <div class="row-end">
+            <button class="btn">提交</button>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 复习题（错题回来，只加标记） -->
+    <article class="q review">
+      <div class="q-hd">
+        <span class="q-idx">第 08 题</span>
+        <span class="chip">复习 · 第 2 次</span>
+        <button class="flag">⚑ 标记问题</button>
+      </div>
+      <div class="q-body plain">
+        <p class="q-stem">「吴带当风」形容的是哪位画家的用笔风格？</p>
+        <div class="opts">
+          <div class="opt"><span class="k">A</span>顾恺之</div>
+          <div class="opt"><span class="k">B</span>吴道子</div>
+          <div class="opt"><span class="k">C</span>张萱</div>
+          <div class="opt"><span class="k">D</span>周昉</div>
+        </div>
+        <div class="row-end">
+          <button class="btn">提交</button>
+          <span class="hint">1 天后重推过，连对 2 次即出队</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- 名词解释（自评） -->
+    <article class="q">
+      <div class="q-hd">
+        <span class="q-idx">第 09 题</span>
+        <span class="chip">名词解释</span>
+        <button class="flag">⚑ 标记问题</button>
+      </div>
+      <div class="q-body plain">
+        <p class="q-stem">请解释：<b>「有意味的形式」</b></p>
+        <textarea placeholder="写下你的答案，提交后对照参考答案自评"></textarea>
+        <div class="row-end">
+          <button class="btn">提交</button>
+          <span class="hint">提交后才给参考答案</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- 开放论述（自评 · 对标考研论述题） -->
+    <article class="q">
+      <div class="q-hd">
+        <span class="q-idx">第 10 题</span>
+        <span class="chip">开放论述</span>
+        <button class="flag">⚑ 标记问题</button>
+      </div>
+      <div class="q-body plain">
+        <p class="q-stem">「什么时候该停笔」是一个判断，不是一个事实。提香晚年任由颜料堆在画布上，塞尚在写生中反复涂改，德加干脆把画面停在"未完成"。请结合一位画家的具体作品、以及你自己的作画经验，论述：完成感究竟从哪里来？</p>
+        <textarea placeholder="写下你的论述，提交后对照参考思路自评"></textarea>
+        <div class="row-end">
+          <button class="btn">提交</button>
+          <span class="hint">提交后才给参考思路</span>
+        </div>
+      </div>
+    </article>
+
+    <div class="done">答满 10 题，今天就算打卡了 · 补做昨天的题也算进今天</div>
+  </section>
+
+  <!-- ===== ② 本周一批 ===== -->
+  <section class="block">
+    <div class="block-hd">
+      <h2>本周一批</h2>
+      <div class="meta">本周不看也不会催你</div>
+    </div>
+
+    <div class="weekly">
+      <div class="wk" data-anchor="art">
+        <div class="wk-lb">每日一画</div>
+        <div class="wk-fig parallax">
+          <img class="develop zoomable" src="img/weekly-art.jpg" alt="本周画作">
+        </div>
+        <div class="wk-name">春山图（局部）</div>
+        <div class="grow"></div>
+        <input type="text" placeholder="写一句你看到的东西…" style="margin-top:14px">
+        <button class="btn">存进画库</button>
+      </div>
+
+      <div class="wk" data-anchor="read">
+        <div class="wk-lb">书籍摘录</div>
+        <blockquote>“我们之所以认为某幅画‘看上去很真’，往往不是因为画家画得准，而是因为他恰好符合我们被训练过的观看习惯。”</blockquote>
+        <div class="src">《隐秘的知识》· 第四章</div>
+        <div class="grow"></div>
+        <button class="flag" style="margin-left:0; text-align:left">⚑ 标记问题</button>
+      </div>
+
+      <div class="wk" data-anchor="think">
+        <div class="wk-lb">开放问题</div>
+        <p style="font:400 15.5px/1.7 var(--font-title)">瓦萨里把绘画史写成"不断逼近自然"的进步史；可二十世纪初的画家却主动拆掉了线性透视。请论述：从"征服自然"到"拆解自然"，这一转向是绘画的退步，还是它对自身媒介的自觉？</p>
+        <div class="grow"></div>
+        <textarea placeholder="写下你的想法（可留空）" style="height:84px; margin-top:14px"></textarea>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="foot">设计稿 · 用来对比视觉方向，不是产品代码。四个方案共用同一套结构，只换皮。</div>
+
+<!-- ③ 放大过渡用的全屏层 -->
+<div class="lb" id="lb">
+  <div class="scrim"></div>
+  <img alt="">
+  <div class="cap">点任意处收起 · Esc 也可以</div>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var animOn = !reduce;
+
+  /* ---------------- 方案切换（设计稿专属） ---------------- */
+  var skinBtns = document.querySelectorAll('.switcher button[data-set]');
+  skinBtns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      root.setAttribute('data-skin', b.dataset.set);
+      skinBtns.forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+    });
+  });
+
+  /* ---------------- ② 内容依次浮入（等封面收起后才开始，免得演给封面看） ---------------- */
+  var targets = [], started = false;
+  var seen = 0, seenTimer = null;
+
+  function stagger(el) {
+    var d = Math.min(seen++, 6) * 65;                 /* 一块接一块，最多错开 6 拍 */
+    setTimeout(function () { el.classList.add('in'); }, d);
+    clearTimeout(seenTimer);
+    seenTimer = setTimeout(function () { seen = 0; }, 700);
+  }
+
+  function startReveal() {
+    if (started) return;
+    started = true;
+    targets = Array.prototype.slice.call(
+      document.querySelectorAll('.stats, .block-hd, .q, .wk, .done')
+    );
+    targets.forEach(function (el) { el.classList.add('reveal'); });
+
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          stagger(e.target);
+          io.unobserve(e.target);
+        });
+      }, { threshold: 0.12 });
+      targets.forEach(function (el) { io.observe(el); });
+    } else {
+      targets.forEach(function (el) { el.classList.add('in'); });
+    }
+  }
+
+  /* ---------------- ① 图片显影（可重播） ---------------- */
+  function replayDevelop() {
+    document.querySelectorAll('.develop').forEach(function (img) {
+      img.style.animation = 'none';
+      void img.offsetWidth;                            /* 强制重排，动画才能重跑 */
+      img.style.animation = '';
+    });
+  }
+
+  /* ---------------- ④ 图片视差（滚动时图比文字慢一点） ---------------- */
+  var parallaxEls = document.querySelectorAll('.parallax');
+  function parallax() {
+    if (!animOn) return;
+    var vh = window.innerHeight;
+    parallaxEls.forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.bottom < -120 || r.top > vh + 120) return;
+      var center = r.top + r.height / 2 - vh / 2;
+      var y = Math.max(-18, Math.min(18, -center * 0.06));
+      el.style.transform = 'translateY(' + y.toFixed(1) + 'px)';
+    });
+  }
+  window.addEventListener('scroll', parallax, { passive: true });
+  window.addEventListener('resize', parallax);
+
+  /* ---------------- ③ 点图放大成整幅（从缩略图长出来） ---------------- */
+  var lb = document.getElementById('lb');
+  var lbImg = lb.querySelector('img');
+  var opener = null, closing = false;
+
+  function bigRect(r) {
+    var vw = window.innerWidth, vh = window.innerHeight;
+    var s = Math.min(vw * 0.88 / r.width, vh * 0.8 / r.height);
+    var w = r.width * s, h = r.height * s;
+    return { left: (vw - w) / 2, top: (vh - h) / 2 - 16, width: w, height: h };
+  }
+
+  function openLB(img) {
+    opener = img;
+    var r = img.getBoundingClientRect();
+    lbImg.src = img.currentSrc || img.src;
+    lb.classList.add('on');
+    lbImg.style.transition = 'none';
+    lbImg.style.left = r.left + 'px';
+    lbImg.style.top = r.top + 'px';
+    lbImg.style.width = r.width + 'px';
+    lbImg.style.height = r.height + 'px';
+    void lbImg.offsetWidth;
+    lbImg.style.transition = '';
+    requestAnimationFrame(function () {
+      lb.classList.add('in');
+      var t = bigRect(r);
+      lbImg.style.left = t.left + 'px';
+      lbImg.style.top = t.top + 'px';
+      lbImg.style.width = t.width + 'px';
+      lbImg.style.height = t.height + 'px';
+    });
+  }
+
+  function closeLB() {
+    if (closing || !opener) return;
+    closing = true;
+    var r = opener.getBoundingClientRect();
+    lb.classList.remove('in');
+    lbImg.style.left = r.left + 'px';
+    lbImg.style.top = r.top + 'px';
+    lbImg.style.width = r.width + 'px';
+    lbImg.style.height = r.height + 'px';
+    setTimeout(function () {
+      lb.classList.remove('on');
+      lbImg.removeAttribute('style');
+      closing = false;
+      opener = null;
+    }, 380);
+  }
+
+  document.querySelectorAll('img.zoomable').forEach(function (img) {
+    img.addEventListener('click', function () { openLB(img); });
+  });
+  lb.addEventListener('click', closeLB);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeLB();
+  });
+
+  /* ============ 主界面：横排卡片 · 鼠标左右移动 · 两级进入 ============ */
+  var cover = document.getElementById('cover');
+  var pg = document.getElementById('pg');
+  var cvGripBar = document.querySelector('.cv-grip .bar i');
+  var cvCards = cover ? Array.prototype.slice.call(cover.querySelectorAll('.cv-card')) : [];
+  var cvOpen = -1;
+
+  /* 鼠标左右移动 → 整排卡片跟着平移（缓动追赶，不是硬跟手） */
+  var deckView = cover ? cover.querySelector('.cv-deck-view') : null;
+  var deck = cover ? cover.querySelector('.cv-deck') : null;
+  var panMax = 0, panCur = 0, panAim = 0, panRAF = null;
+
+  function measureDeck() {
+    if (!deckView || !deck) return;
+    panMax = Math.max(0, deck.scrollWidth - deckView.clientWidth);
+  }
+
+  function panFrame() {
+    panRAF = null;
+    var d = panAim - panCur;
+    if (Math.abs(d) < 0.2) panCur = panAim; else panCur += d * 0.14;
+    if (deck) deck.style.transform = 'translate3d(' + panCur.toFixed(2) + 'px,0,0)';
+    if (panCur !== panAim) panRAF = requestAnimationFrame(panFrame);
+  }
+
+  function panTo(clientX) {
+    var x = Math.min(1, Math.max(0, clientX / window.innerWidth));
+    panAim = -x * panMax;                       /* 鼠标往右 → 镜头往右 */
+    if (cvGripBar) cvGripBar.style.width = (x * 100).toFixed(1) + '%';
+    if (reduce) panCur = panAim;                /* 系统要求减少动效时不做追赶 */
+    if (!panRAF) panRAF = requestAnimationFrame(panFrame);
+  }
+
+  function hideCover(goAnchor) {
+    if (!cover) return;
+    if (pg) pg.classList.remove('on');
+    cover.style.transition = 'transform .46s cubic-bezier(.4,0,.2,1), opacity .4s ease';
+    cover.style.transform = 'scale(.97)';
+    cover.style.opacity = '0';
+    cover.classList.add('away');
+    hideToast();                       /* 离开主界面时通知一起收走 */
+    syncBackHome();                    /* 并亮出"← 返回主界面" */
+    startReveal();
+    setTimeout(function () {
+      cover.style.display = 'none';
+      if (goAnchor) {
+        var t = document.querySelector('[data-anchor="' + goAnchor + '"]');
+        if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 480);
+  }
+
+  function showCover() {
+    if (!cover) return;
+    cover.style.display = '';
+    void cover.offsetWidth;
+    cover.classList.remove('away');
+    cover.style.transition = '';
+    cover.style.transform = '';
+    cover.style.opacity = '';
+    if (pg) pg.classList.remove('on');
+    cvOpen = -1;
+    cvCards.forEach(function (c) { c.classList.remove('open'); });
+    measureDeck();
+    hideToast();
+    syncBackHome();
+  }
+
+  /* 推送演示：桌面通知（内容钩子型）—— 点它直接进今日页 */
+  var toast = document.getElementById('toast');
+  var toastX = document.getElementById('toastX');
+  var toastDemo = document.getElementById('toastDemo');
+  var toastTimer = null;
+
+  function showToast(delay) {
+    if (!toast) return;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toast.classList.add('in'); }, delay || 0);
+  }
+
+  function hideToast() {
+    if (!toast) return;
+    clearTimeout(toastTimer);
+    toast.classList.remove('in');
+  }
+
+  /* 二级页的返回：主界面收起、且没叠着进度页时，才亮出来 */
+  var backHome = document.getElementById('backHome');
+
+  function syncBackHome() {
+    if (!backHome) return;
+    var away = !!(cover && cover.classList.contains('away'));
+    var onPg = !!(pg && pg.classList.contains('on'));
+    backHome.classList.toggle('in', away && !onPg);
+  }
+
+  /* 碎片入口：v0.2 才真有功能，第一版点一下让它自己说清楚 */
+  var fragFab = document.getElementById('fragFab');
+  var fabTimer = null;
+
+  if (fragFab) {
+    fragFab.addEventListener('click', function () {
+      clearTimeout(fabTimer);
+      fragFab.classList.add('open');
+      fabTimer = setTimeout(function () { fragFab.classList.remove('open'); }, 2600);
+    });
+  }
+
+  /* 第一下：就地展开（只给预览）；第二下：才进内容 */
+  function openCard(i) {
+    cvOpen = (cvOpen === i) ? -1 : i;
+    cvCards.forEach(function (c, n) { c.classList.toggle('open', n === cvOpen); });
+  }
+
+  function enterCard(i) {
+    var go = cvCards[i].dataset.go;
+    if (go === 'stats') {           /* 进度页：叠一层，不离开主界面 */
+      if (pg) pg.classList.add('on');
+      syncBackHome();
+    } else {
+      hideCover(go);                 /* quiz → 今日页；art → 今日页的本周一批 */
+    }
+  }
+
+  if (cover) {
+    cvCards.forEach(function (c, n) {
+      c.addEventListener('click', function (e) {
+        if (e.target.closest('[data-enter]')) { enterCard(n); return; }
+        if (n !== cvOpen) { openCard(n); return; }      /* 第一下是"看" */
+        enterCard(n);                                   /* 第二下才是"进" */
+      });
+    });
+
+    /* 鼠标在主界面上左右移动 → 整排卡片跟着走 */
+    cover.addEventListener('pointermove', function (e) { panTo(e.clientX); });
+    /* 主界面盖住整屏时，别让滚轮把下面的页面滚了 */
+    cover.addEventListener('wheel', function (e) { e.preventDefault(); }, { passive: false });
+    window.addEventListener('resize', measureDeck);
+
+    /* 不想点两次也能进：回车直接做题 */
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter') return;
+      if (cover.classList.contains('away') || cover.style.display === 'none') return;
+      if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return;
+      /* 展开的是"学习进度"时，回车直接进进度页 */
+      if (cvOpen > -1 && cvCards[cvOpen].dataset.go === 'stats') {
+        if (pg) pg.classList.add('on');
+        syncBackHome();
+        return;
+      }
+      hideCover('quiz');
+    });
+
+    if (pg) pg.querySelector('.back').addEventListener('click', function () {
+      pg.classList.remove('on');
+      syncBackHome();
+    });
+
+    /* 二级页的"← 返回主界面"：回到主界面 */
+    if (backHome) backHome.addEventListener('click', showCover);
+
+    /* 进度页的打卡日历（假数据，只标完成 / 未完成） */
+    var cal = document.getElementById('cal');
+    if (cal) {
+      var done = [1,1,1,0,1,1,0,1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1,0,1];
+      var html = '';
+      for (var i = 0; i < 28; i++) html += '<i class="' + (done[i] ? 'on' : '') + '"></i>';
+      cal.innerHTML = html;
+    }
+
+    document.querySelector('.switcher button[data-cover]')
+      .addEventListener('click', showCover);
+
+    /* 桌面通知：点它 → 今日页；✕ 关掉；可重看 */
+    if (toast) {
+      toast.addEventListener('click', function () { hideToast(); hideCover('quiz'); });
+      toast.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); hideToast(); hideCover('quiz'); }
+      });
+      if (toastX) toastX.addEventListener('click', function (e) { e.stopPropagation(); hideToast(); });
+      if (toastDemo) toastDemo.addEventListener('click', function (e) { e.stopPropagation(); showToast(0); });
+      showToast(900);
+    }
+
+    measureDeck();
+    syncBackHome();                  /* 初始：主界面在，返回按钮不出现 */
+  } else {
+    startReveal();
+  }
+
+  /* ---------------- 总控：重播 / 开关 ---------------- */
+  var animBtn = document.querySelector('.switcher button[data-anim]');
+
+  function playAll() {
+    if (cover && !cover.classList.contains('away')) hideCover();   /* 重播时封面先退场 */
+    startReveal();
+    replayDevelop();
+    targets.forEach(function (el, i) {
+      el.classList.remove('in');
+      setTimeout(function () { el.classList.add('in'); }, 60 * i);
+    });
+  }
+
+  animBtn.addEventListener('click', function () {
+    animOn = !animOn;
+    root.classList.toggle('anim', animOn);
+    root.classList.toggle('no-anim', !animOn);
+    animBtn.textContent = '动效：' + (animOn ? '开' : '关');
+    animBtn.setAttribute('aria-pressed', String(animOn));
+    if (animOn) playAll();
+  });
+
+  document.querySelector('.switcher button[data-replay]')
+    .addEventListener('click', playAll);
+
+  root.classList.add(animOn ? 'anim' : 'no-anim');
+  if (!animOn) {
+    startReveal();
+    targets.forEach(function (el) { el.classList.add('in'); });
+  }
+})();
+</script>
+</body>
+</html>

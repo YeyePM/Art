@@ -1,0 +1,10 @@
+# 密钥
+.env
+.env.local
+
+# 数据与本机缓存（SQLite 文件、图片缓存）
+data/
+
+# 依赖与构建产物
+node_modules/
+dist/
