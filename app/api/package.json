@@ -21,6 +21,7 @@
     "verify:t10": "node scripts/verify-t10.js",
     "verify:t11": "node scripts/verify-t11.js",
     "verify:t12": "node scripts/verify-t12.js",
+    "verify:t14": "node scripts/verify-t14.js",
     "autostart": "node scripts/install-autostart.js",
     "autostart:remove": "node scripts/install-autostart.js remove",
     "backfill:images": "node scripts/backfill-images.js"

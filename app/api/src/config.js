@@ -36,7 +36,7 @@ export const config = {
     at: '21:00',
     windowStart: '09:00',
     windowEnd: '22:00',
-    // 点通知要打开的地址（今日页）；前端起来后如走独立路由，改这一处即可
-    url: `http://localhost:${Number(process.env.PORT) || 5178}/`
+    // 点通知要打开的地址（今日页）。前端已走独立路由（/today），改这一处即可
+    url: `http://localhost:${Number(process.env.PORT) || 5178}/today`
   }
 };

@@ -1,0 +1,91 @@
+:root {
+  /* B · 夜馆（暗色）—— 设计令牌见 docs/08-前端交接文档.md 第 5 节 / design/今日页-视觉方向对比.html */
+  --bg: #0d0f12;
+  --card: #14181d;
+  --line: rgba(232, 227, 218, 0.14);
+  --ink: #e8e3da;
+  --ink2: #9a948a;
+  --accent: #6e9bc5;
+  --btn-bg: #6e9bc5;
+  --btn-ink: #0d0f12;
+  --radius: 10px;
+  --pad: 24px;
+  --media-radius: 10px;
+  --media-border: 1px solid rgba(232, 227, 218, 0.2);
+  --font-title: -apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif;
+  --font-body: -apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif;
+  --ok: #7bc47f;
+  --warn: #d8a35b;
+  --bad: #d97a72;
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 15px/1.6 var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--accent);
+}
+
+.page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px var(--pad) 64px;
+}
+
+.page h1 {
+  margin: 0 0 6px;
+  font: 600 26px/1.3 var(--font-title);
+}
+
+.page .sub {
+  margin: 0 0 28px;
+  color: var(--ink2);
+  font-size: 13px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--pad);
+}
+
+.muted {
+  color: var(--ink2);
+}
+
+.ok {
+  color: var(--ok);
+  font-weight: 600;
+}
+
+.btn {
+  font: 500 13px/1 var(--font-body);
+  color: var(--btn-ink);
+  background: var(--btn-bg);
+  border: none;
+  border-radius: var(--radius);
+  padding: 9px 16px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  filter: brightness(1.08);
+}

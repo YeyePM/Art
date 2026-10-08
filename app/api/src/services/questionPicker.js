@@ -131,7 +131,10 @@ export function pickDailyQuestions({
     }
     if (taken) continue;
 
-    // 该题型题库里没有：退让成任意没到上限的题，别让当日题数空着
+    // 该题型题库里没有：退让成任意没到上限的题，别让当日题数空着。
+    // **退让是有意为之（老叶 2026-10-08 定的口径 A），别当成 bug 修掉**：
+    // 当天题数优先，题型构成是"尽力而为"。代价是此时 needMore 会变成 0，
+    // 于是当天不会再调 AI —— 图像辨识题的"库存保鲜"由 services/todaySession.js 单独兜（T14-A）。
     for (const key of order) {
       const index = pools[key].findIndex((q) => counts[q.type] < typeLimit(q.type));
       if (index !== -1) {

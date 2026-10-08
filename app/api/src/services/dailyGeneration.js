@@ -15,18 +15,20 @@ const MAX_ROUNDS = 2;
 const TYPES = ['essay', 'term', 'image', 'objective'];
 
 /**
- * @param {{date:string, needMore:number, needMoreByType?:object, artworks?:Array<object>}} params
+ * @param {{date:string, needMore:number, needMoreByType?:object, artworks?:Array<object>, scope?:string}} params
+ *   scope：这次生成的用途，只影响"同一天不再重复生成"的记忆键（默认 `daily` = 当天题单）。
+ *   T14 的"图像题库存保鲜"用 `image-restock`，与当天题单各记一份，免得谁把谁吞掉。
  * @returns {Promise<{
  *   hook:string|null, insertedIds:number[], inserted:number, skipped:number,
  *   requested:number, shortfall:number, reused:boolean, usage:object|null
  * }>}
  *   hook 交给 T4 写进 daily_sessions.hook（推送用）；这一层不碰 daily_sessions
  */
-export async function generateAndStoreDailyQuestions({ date, needMore, needMoreByType = {}, artworks = [] } = {}) {
+export async function generateAndStoreDailyQuestions({ date, needMore, needMoreByType = {}, artworks = [], scope = 'daily' } = {}) {
   const requested = Math.max(0, Number(needMore) || 0);
-  const key = String(date ?? '');
+  const key = `${date ?? ''}::${scope}`;
 
-  // 今天已经生成过：直接复用，不再花钱
+  // 这个用途今天已经生成过：直接复用，不再花钱
   if (requested > 0) {
     const memo = generatedByDate.get(key);
     if (memo) return { ...memo, reused: true };
@@ -116,14 +118,17 @@ function trimToQuota(questions, quota) {
   return kept;
 }
 
-/** 今天已经生成过多少（进程内），排查用 */
-export function generatedTodayCount(date) {
-  return generatedByDate.get(String(date ?? ''))?.inserted ?? 0;
+/** 今天已经生成过多少（进程内），排查用；不传 scope 就看当天题单那一份 */
+export function generatedTodayCount(date, scope = 'daily') {
+  return generatedByDate.get(`${date ?? ''}::${scope}`)?.inserted ?? 0;
 }
 
-/** 只测试用：忘掉某天的记忆 */
+/** 只测试用：忘掉某天的记忆（所有用途一起忘） */
 export function forgetGeneration(date) {
-  generatedByDate.delete(String(date ?? ''));
+  const prefix = `${date ?? ''}::`;
+  for (const key of [...generatedByDate.keys()]) {
+    if (key.startsWith(prefix)) generatedByDate.delete(key);
+  }
 }
 
 /** 多轮调用的用量相加（验收时用来估算花了多少钱） */

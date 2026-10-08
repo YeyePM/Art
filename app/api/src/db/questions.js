@@ -63,6 +63,11 @@ export function insertQuestions(items) {
 /**
  * 取候选新题：未被标记问题、没被排除、且还没作答过。
  * 出题时要靠它填满当日配额。
+ *
+ * T14-B 坏题防线：**图像辨识题必须有 options**（`type != 'image' OR options IS NOT NULL`）。
+ * 早期生成过一批 `options / artwork_id / image_path` 全空的图像题，进了题单就是"没图 + 怎么选都判错"
+ * （判分时两边都归一成 null）。这类坏题不进候选池——不给 options 补默认值，坏题就该进不来。
+ *
  * @param {{excludeIds?: number[]}} options
  */
 export function getCandidates({ excludeIds = [] } = {}) {
@@ -77,6 +82,7 @@ export function getCandidates({ excludeIds = [] } = {}) {
              WHERE qt.question_id = q.id) AS tag_names
       FROM questions q
      WHERE q.is_flagged = 0
+       AND (q.type <> 'image' OR q.options IS NOT NULL)
        AND q.id NOT IN (SELECT question_id FROM answers)
        ${ids.length ? `AND q.id NOT IN (${placeholders})` : ''}
      ORDER BY q.id
@@ -170,6 +176,17 @@ export function setImagePathForArtwork(artworkId, imagePath) {
 export function countImageQuestionsMissingPath() {
   return getDb()
     .prepare("SELECT count(*) AS c FROM questions WHERE type = 'image' AND artwork_id IS NOT NULL AND image_path IS NULL")
+    .get().c;
+}
+
+/**
+ * 库里"可用"的图像辨识题有几道（T14-A 库存保鲜用）。
+ * 口径：没被标记 + 有 options（跟 getCandidates 的坏题防线同一条）。
+ * 低于当日上限就说明这个题型要枯竭了，需要单独补货。
+ */
+export function countUsableImageQuestions() {
+  return getDb()
+    .prepare("SELECT count(*) AS c FROM questions WHERE type = 'image' AND is_flagged = 0 AND options IS NOT NULL")
     .get().c;
 }
 

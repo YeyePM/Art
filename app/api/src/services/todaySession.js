@@ -7,7 +7,7 @@ import { config } from '../config.js';
 import { getSession, getSessionQuestionIds, saveSession } from '../db/dailySessions.js';
 import { getDueReviewIds, getActiveReviewIds } from '../db/reviewQueue.js';
 import { getAnsweredIdsOn, filterUnanswered } from '../db/answers.js';
-import { getForDisplay } from '../db/questions.js';
+import { getForDisplay, countUsableImageQuestions } from '../db/questions.js';
 import { getUsedExternalIds } from '../db/artworks.js';
 import { pickDailyQuestions, todayInShanghai } from './questionPicker.js';
 import { generateAndStoreDailyQuestions } from './dailyGeneration.js';
@@ -17,12 +17,14 @@ import { fetchArtworksForToday, artworkDemandForToday } from '../images/artworkS
 /**
  * 凑齐并写下当天的题单。**幂等**：同一天第二次调用直接读库，不再调 AI、不再花钱。
  *
- * @param {{date?:string, artworks?:Array<object>}} params
+ * @param {{date?:string, artworks?:Array<object>, generate?:Function}} params
  *   artworks：测试用，显式指定作品元数据；不传则走 images/ 层取博物馆数据
+ *   generate：测试用，替换生成函数（默认就是 `generateAndStoreDailyQuestions`）
  * @returns {Promise<{date, questionIds, hook, checkedIn, generated, reused, shortfall}>}
  */
-export async function buildTodaySession({ date, artworks } = {}) {
+export async function buildTodaySession({ date, artworks, generate } = {}) {
   const day = date ?? todayInShanghai();
+  const run = generate ?? generateAndStoreDailyQuestions;
 
   // 当天已经写过：原样返回，这是"同一天不二次调 AI"的落地方式
   const existing = getSession(day);
@@ -55,7 +57,7 @@ export async function buildTodaySession({ date, artworks } = {}) {
 
   if (plan.needMore > 0) {
     try {
-      const result = await generateAndStoreDailyQuestions({
+      const result = await run({
         date: day,
         needMore: plan.needMore,
         needMoreByType: plan.needMoreByType,
@@ -88,6 +90,26 @@ export async function buildTodaySession({ date, artworks } = {}) {
     };
   }
 
+  // T14-A 图像辨识题库存保鲜（口径 A：退让保留，但图像题不能因此枯竭）。
+  // 退让会用别的题把当天 10 道填满 → needMore 变成 0 → 当天一次 AI 都不调，库里图像题只减不增。
+  // 所以这里**除 needMore 之外**再算一个"图像题库存缺口"，缺了就额外补一次货：
+  //   **只往题库写，不改当天已定的题单**（补的货明天组题时自然被用上），也不影响用户正做着题。
+  // 补货失败只是少了几道库存，不该连累今天——题单照发。
+  const imageGap = imageStockGap();
+  if (imageGap > 0) {
+    try {
+      await run({
+        date: day,
+        needMore: imageGap,
+        needMoreByType: { image: imageGap },
+        artworks: await resolveArtworks(imageGap, artworks),
+        scope: 'image-restock'
+      });
+    } catch {
+      // 有意吞掉：补货是锦上添花，坏了也不该让用户今天做不了题
+    }
+  }
+
   // 当天题单就此固定。AI 没补齐也照写：宁可有几天题少一点，也不反复花钱重试
   const saved = saveSession({
     date: day,
@@ -113,9 +135,9 @@ export async function buildTodaySession({ date, artworks } = {}) {
  * 注意 questions 走的是 db 的 getForDisplay，**天然不含 answer / explanation**；
  * 这里是唯一的出口，别在这条路上加答案字段。
  */
-export async function getTodayView({ date, artworks } = {}) {
+export async function getTodayView({ date, artworks, generate } = {}) {
   const day = date ?? todayInShanghai();
-  const session = await buildTodaySession({ date: day, artworks });
+  const session = await buildTodaySession({ date: day, artworks, generate });
 
   const reviewIds = new Set(getActiveReviewIds());
   const questions = getForDisplay(session.questionIds).map((question) => ({
@@ -135,11 +157,18 @@ export async function getTodayView({ date, artworks } = {}) {
   return {
     date: day,
     questions,
-    progress: { done, total: session.questionIds.length },
+    // T14-C 分母跟"实际取到的题数"对齐：题单里万一挂着已删除的 id，getForDisplay 会跳过它，
+    // 那就别再显示"9 道题 / 进度 x/10"。done 的口径不变（当天已作答数）。
+    progress: { done, total: questions.length },
     checked_in: session.checkedIn,
     // M6 兜底：AI 没帮上忙时给一句人话（正常时为 null，字段始终在，前端可直接判空）
     notice: session.generationError ?? null
   };
+}
+
+/** 图像辨识题的库存缺口：库里可用的图像题少于当日上限，就说明这个题型要枯竭了 */
+function imageStockGap() {
+  return Math.max(0, config.typeLimits.image - countUsableImageQuestions());
 }
 
 /** 图像辨识题要几件作品：显式传了就照用（测试），不传就走 images/ 层取博物馆元数据 */

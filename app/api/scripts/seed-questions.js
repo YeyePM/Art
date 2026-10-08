@@ -96,10 +96,14 @@ export function buildFakeQuestions() {
 
   for (const [[work, artist, period, school], stem] of IMAGE_QUESTIONS) {
     const origin = CN_WORKS.some(([w]) => w === work) ? '中国美术史' : '外国美术史';
+    // 图像辨识题同样要有 options —— T14-B 坏题防线会把「没 options 的图像题」挡在候选池外，
+    // 这里的假题是拿来喂组题规则的，必须跟真实数据一致（否则等于自己造坏题）。
+    const { options, answer } = optionsFor(artist, ALL_WORKS.findIndex(([w]) => w === work));
     items.push({
       type: 'image',
       stem,
-      answer: `${work} · ${artist} · ${period}`,
+      options,
+      answer,
       explanation: `${work}，${artist}，${period}，${school}。`,
       tags: [period, school, artist, work, origin]
     });

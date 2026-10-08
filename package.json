@@ -4,10 +4,13 @@
   "version": "0.1.0",
   "description": "美术史复盘网站 · 单仓两包（app/api 后端 + app/web 前端）",
   "workspaces": [
-    "app/api"
+    "app/api",
+    "app/web"
   ],
   "scripts": {
     "dev": "npm run dev -w @art/api",
+    "dev:web": "npm run dev -w @art/web",
+    "build:web": "npm run build -w @art/web",
     "init:db": "npm run init:db -w @art/api",
     "seed": "npm run seed -w @art/api",
     "preview": "npm run preview -w @art/api",

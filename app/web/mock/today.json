@@ -1,0 +1,108 @@
+{
+  "date": "2026-10-08",
+  "questions": [
+    {
+      "id": 1,
+      "type": "image",
+      "stem": "这幅作品最可能出自谁之手？请依据光色、空间与笔触判断。",
+      "options": ["A 伦勃朗", "B 约翰内斯·维米尔", "C 扬·范艾克", "D 彼得·德·霍赫"],
+      "difficulty": "进阶",
+      "image_url": "/img/q-image.jpg",
+      "is_review": false,
+      "tags": ["荷兰", "黄金时代"]
+    },
+    {
+      "id": 2,
+      "type": "objective",
+      "stem": "「吴带当风」形容的是哪位画家的用笔风格？",
+      "options": ["A 顾恺之", "B 吴道子", "C 阎立本", "D 张僧繇"],
+      "difficulty": "基础",
+      "image_url": null,
+      "is_review": false,
+      "tags": ["唐代", "人物画"]
+    },
+    {
+      "id": 3,
+      "type": "term",
+      "stem": "名词解释：有意味的形式",
+      "options": null,
+      "difficulty": "进阶",
+      "image_url": null,
+      "is_review": false,
+      "tags": ["形式主义", "克莱夫·贝尔"]
+    },
+    {
+      "id": 4,
+      "type": "objective",
+      "stem": "「元四家」中，以《富春山居图》闻名的画家是？",
+      "options": ["A 吴镇", "B 倪瓒", "C 黄公望", "D 王蒙"],
+      "difficulty": "基础",
+      "image_url": null,
+      "is_review": true,
+      "tags": ["元代", "文人画"]
+    },
+    {
+      "id": 5,
+      "type": "image",
+      "stem": "此作的皴法与构图程式，最可能属于哪个时期的文人画？",
+      "options": ["A 北宋", "B 元代", "C 明代", "D 清代"],
+      "difficulty": "挑战",
+      "image_url": "/img/weekly-art.jpg",
+      "is_review": false,
+      "tags": ["中国美术史", "山水画"]
+    },
+    {
+      "id": 6,
+      "type": "objective",
+      "stem": "《荷拉斯兄弟之誓》的作者是？",
+      "options": ["A 安格尔", "B 雅克-路易·大卫", "C 普桑", "D 德拉克洛瓦"],
+      "difficulty": "基础",
+      "image_url": null,
+      "is_review": false,
+      "tags": ["法国", "新古典主义"]
+    },
+    {
+      "id": 7,
+      "type": "term",
+      "stem": "名词解释：印象派",
+      "options": null,
+      "difficulty": "基础",
+      "image_url": null,
+      "is_review": true,
+      "tags": ["法国", "19世纪"]
+    },
+    {
+      "id": 8,
+      "type": "objective",
+      "stem": "张萱《捣练图》在题材上属于？",
+      "options": ["A 绮罗人物画", "B 宗教壁画", "C 山水长卷", "D 花鸟小品"],
+      "difficulty": "进阶",
+      "image_url": null,
+      "is_review": false,
+      "tags": ["唐代", "仕女画"]
+    },
+    {
+      "id": 9,
+      "type": "essay",
+      "stem": "一幅画「画完了」与「画对了」是不是同一件事？请结合至少一件具体作品，谈谈你的判断依据。",
+      "options": null,
+      "difficulty": "挑战",
+      "image_url": null,
+      "is_review": false,
+      "tags": ["创作实践", "完成度"]
+    },
+    {
+      "id": 10,
+      "type": "objective",
+      "stem": "《亚威农少女》被视为哪个流派的开端之作？",
+      "options": ["A 野兽派", "B 立体主义", "C 未来主义", "D 表现主义"],
+      "difficulty": "进阶",
+      "image_url": null,
+      "is_review": false,
+      "tags": ["现代主义", "立体主义"]
+    }
+  ],
+  "progress": { "done": 0, "total": 10 },
+  "checked_in": false,
+  "notice": null
+}
